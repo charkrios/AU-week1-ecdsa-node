@@ -1,3 +1,8 @@
+const secp = require("ethereum-cryptography/secp256k1");
+const { keccak256 } = require('ethereum-cryptography/keccak');
+const { utf8ToBytes } = require('ethereum-cryptography/utils');
+const { toHex } = require('ethereum-cryptography/utils');
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -25,23 +30,30 @@ app.get("/balance/:address", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  // TODO: get a signature from the client-side application
-  // recover tge public address from the signature
 
-  const { sender, recipient, amount } = req.body;
+  const { sender, recipient, amount, signature, recoveryBit } = req.body;
 
-  setInitialBalance(sender);
-  setInitialBalance(recipient);
-  if (recipient != sender) {
-    if (balances[sender] < amount) {
-      res.status(400).send({ message: "Not enough funds!" });
+  const messageHash = keccak256(utf8ToBytes(recipient + amount));
+  const uintSignature = Uint8Array.from(Object.values(signature));
+  const recoveredPublicKey = toHex(secp.recoverPublicKey(messageHash, uintSignature, recoveryBit));
+  const verified = secp.verify(uintSignature, messageHash, sender);
+
+  if (verified && recoveredPublicKey == sender) {
+    setInitialBalance(sender);
+    setInitialBalance(recipient);
+    if (recipient != sender) {
+      if (balances[sender] < amount) {
+        res.status(400).send({ message: "Not enough funds!" });
+      } else {
+        balances[sender] -= amount;
+        balances[recipient] += amount;
+        res.send({ balance: balances[sender] });
+      }
     } else {
-      balances[sender] -= amount;
-      balances[recipient] += amount;
-      res.send({ balance: balances[sender] });
+      res.status(400).send({ message: "Cannot send transaction to your own address!" });
     }
   } else {
-    res.status(400).send({ message: "Cannot send transaction to your own address!" });
+    res.status(400).send({ message: `Signatures don't match! Expected ${recoveredPublicKey} to equal ${sender}` });
   }
 });
 

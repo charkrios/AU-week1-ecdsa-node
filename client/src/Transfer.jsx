@@ -1,7 +1,8 @@
 import { useState } from "react";
 import server from "./server";
+import Signature from "./Signature";
 
-function Transfer({ address, setBalance }) {
+function Transfer({ setBalance, address, privateKey }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
 
@@ -10,6 +11,8 @@ function Transfer({ address, setBalance }) {
   async function transfer(evt) {
     evt.preventDefault();
 
+    const [signature, recoveryBit] = await Signature(privateKey, recipient, sendAmount);
+
     try {
       const {
         data: { balance },
@@ -17,6 +20,8 @@ function Transfer({ address, setBalance }) {
         sender: address,
         amount: parseInt(sendAmount),
         recipient,
+        signature,
+        recoveryBit,
       });
       setBalance(balance);
     } catch (ex) {
