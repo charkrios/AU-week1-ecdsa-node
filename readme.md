@@ -1,13 +1,10 @@
+Task completed without any extras due to not knowing how to properly code with react and node. TRANSACTION_HISTORY and WALLETS_LIST would be great add-ons for this project, as they add a lot of valuable information for debugging purposes.
+
 ## ECDSA Node
 
 This project is an example of using a client and server to facilitate transfers between different addresses. Since there is just a single server on the back-end handling transfers, this is clearly very centralized. We won't worry about distributed consensus for this project.
 
 However, something that we would like to incoporate is Public Key Cryptography. By using Elliptic Curve Digital Signatures we can make it so the server only allows transfers that have been signed for by the person who owns the associated address.
-
-### Video instructions
-For an overview of this project as well as getting started instructions, check out the following video:
-
-https://www.loom.com/share/0d3c74890b8e44a5918c4cacb3f646c4
  
 ### Client
 
@@ -29,3 +26,7 @@ The server folder contains a node.js server using [express](https://expressjs.co
 The application should connect to the default server port (3042) automatically! 
 
 _Hint_ - Use [nodemon](https://www.npmjs.com/package/nodemon) instead of `node` to automatically restart the server on any changes.
+
+### Task
+
+Use the PRIVATE_KEY from the current wallet to get a signature at the client-side, then send this signature to the server in order to get the transaction verified. This process will verify the signature and chek that both WALLET_ADDRESS and TRANSACTION_SENDER are the same
