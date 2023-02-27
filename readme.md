@@ -1,4 +1,4 @@
-Task completed without any extras due to not knowing how to properly code with react and node. TRANSACTION_HISTORY and WALLETS_LIST would be great add-ons for this project, as they add a lot of valuable information for debugging purposes.
+Task completed without any extras. TRANSACTION_HISTORY and WALLETS_LIST would be great add-ons for this project, as they add a lot of valuable information for debugging purposes.
 
 ## ECDSA Node
 
